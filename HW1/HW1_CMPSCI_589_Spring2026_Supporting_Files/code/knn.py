@@ -5,7 +5,7 @@ import operator
 # import
 
 
-class knn:
+class KNN:
     def __init__(self, k=3):
         self.k = k
 
@@ -14,12 +14,12 @@ class knn:
         self.y = np.asarray(y)
 
     def _distance(self, v1, v2):
-        return np.linalg.norm(v1, v2)
+        return np.linalg.norm(v1 - v2)
 
     def _vote(self, yk):
         vote_dict = {}
         for y in yk:
-            if yk not in vote_dict.keys():
+            if y not in vote_dict.keys():
                 vote_dict[y] = 1
             else:
                 vote_dict[y] += 1
@@ -32,13 +32,13 @@ class knn:
     def predicate(self, x):
         y_pred = []
         for i in range(len(x)):
-            all_dis = [self._distance(x, self.x[i]) for i in range(len(self.x))]
+            all_dis = [self._distance(x, self.x[j]) for j in range(len(self.x))]
             top_k = np.argsort(all_dis)[: self.k]
             y_pred.append(self._vote(self.y[top_k]))
         return np.asarray(y_pred)
 
     def score(self, y_preds, y_true):
-        if y_preds is None and y_true is None:
+        if y_preds is None or y_true is None:
             y_preds = self.predicate(self.x)
             y_true = self.y
         y_preds = np.asarray(y_preds)
