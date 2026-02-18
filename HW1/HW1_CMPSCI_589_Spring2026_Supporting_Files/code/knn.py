@@ -30,7 +30,7 @@ class KNN:
         )
         return sort_vote_dict[0][0]
 
-    def train_predicate(self):
+    def train_predicate_leave(self):
         x = self.x
         y_pred = []
         for i in range(len(x)):
