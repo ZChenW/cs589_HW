@@ -15,8 +15,8 @@ def read_csv_file(csv_path):
     df = pd.read_csv(csv_path, header=None)
     if df.shape[1] != 31:
         raise ValueError("Incorrect csv formate")
-    X = df.iloc[:, :-1].to_numpy(dtype=np.float32)  # 569*30
-    y = df.iloc[:, -1].to_numpy(dtype=np.float32)  # 569*1
+    X = df.iloc[:, :-1].to_numpy(dtype=np.int32)  # 569*30
+    y = df.iloc[:, -1].to_numpy(dtype=np.int32)  # 569*1
 
     assert X.shape[1] == 30  # column
     assert y.shape[0] == X.shape[0]  # Row
@@ -38,7 +38,7 @@ def prepare(csv_path, k, seed, normalize=True):
     module.fit(X_train, y_train)
 
     y_test_p = module.predicate(X_test)
-    y_train_p = module.train_predicate(X_train)
+    y_train_p = module.train_predicate()
 
     test_acc = module.score(y_test_p, y_test)
     train_acc = module.score(y_train_p, y_train)
@@ -46,7 +46,7 @@ def prepare(csv_path, k, seed, normalize=True):
     return test_acc, train_acc
 
 
-def train(csv_path):
+def train(csv_path, normalize=True):
     base_seed = 0
     train_acc_mean = []
     train_acc_std = []
@@ -57,7 +57,7 @@ def train(csv_path):
         test_acc_list = []
         for r in range(20):
             seed = base_seed + 100 * r
-            test_acc, train_acc = prepare(csv_path, i, seed)
+            test_acc, train_acc = prepare(csv_path, i, seed, normalize=normalize)
             train_acc_list.append(train_acc)
             test_acc_list.append(test_acc)
         train_acc_mean.append(np.mean(train_acc_list))
@@ -66,6 +66,8 @@ def train(csv_path):
         test_acc_std.append(np.std(test_acc_list, ddof=1))
 
     return train_acc_mean, test_acc_mean, train_acc_std, test_acc_std
+
+def main():
 
 
 # print(df.shape)
