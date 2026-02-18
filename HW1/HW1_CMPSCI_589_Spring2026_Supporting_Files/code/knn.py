@@ -1,5 +1,6 @@
 # import pandas as pd
 # import matplotlib.pyplot as plt
+from typing import List
 import numpy as np
 import operator
 # import
@@ -13,8 +14,8 @@ class KNN:
         self.x = np.asarray(x)
         self.y = np.asarray(y)
 
-    def _distance(self, v1, v2):
-        return np.linalg.norm(v1 - v2)
+    def _distance(self, v1, v2) -> float:
+        return float(np.linalg.norm(v1 - v2))
 
     def _vote(self, yk):
         vote_dict = {}
@@ -29,10 +30,20 @@ class KNN:
         )
         return sort_vote_dict[0][0]
 
+    def train_predicate(self):
+        x = self.x
+        y_pred = []
+        for i in range(len(x)):
+            all_dis = [self._distance(x[i], x[j]) for j in range(len(x))]
+            all_dis[i] = np.inf  # 针对train
+            top_k = np.argsort(all_dis)[: self.k]
+            y_pred.append(self._vote(self.y[top_k]))
+        return np.asarray(y_pred)
+
     def predicate(self, x):
         y_pred = []
         for i in range(len(x)):
-            all_dis = [self._distance(x, self.x[j]) for j in range(len(self.x))]
+            all_dis = [self._distance(x[i], self.x[j]) for j in range(len(self.x))]
             top_k = np.argsort(all_dis)[: self.k]
             y_pred.append(self._vote(self.y[top_k]))
         return np.asarray(y_pred)
