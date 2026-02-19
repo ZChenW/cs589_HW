@@ -79,8 +79,8 @@ def main():
 
     out_dir = os.path.join(BASE_DIR, "pictures")
     os.makedirs(out_dir, exist_ok=True)
-    Figure1 = plt.figure()
 
+    Figure1 = plt.figure()
     plt.errorbar(ks, tr_mean, yerr=tr_std, capsize=3)
     plt.xlabel("Value of k")
     plt.ylabel("Accuracy")

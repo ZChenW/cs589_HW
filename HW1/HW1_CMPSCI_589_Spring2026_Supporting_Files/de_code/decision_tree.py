@@ -52,19 +52,46 @@ class DecisionTree:
 
     def getTree(self, data):
         ## 停止条件：1. attibute的标签全为一类 2. 样本只剩下一个特征
-        lables = data.iloc[0, -1].value_counts()  # biaoqian
-        column = list(data.columns)  # tezheng
+        lables = data.iloc[:, -1].value_counts()  # biaoqian
 
-        if lables[0] == len(data) or len(column) == 1:
-            return lables[0]
+        if len(lables) == 1 or data.shape[1] == 1:
+            return lables.idxmax()
 
         bestfeature = self.GetBestFeature(data)
-        col = column[bestfeature]
-        tree = {col: {}}
-        del column[bestfeature]
+        tree = {bestfeature: {}}
 
-        for i in set(data[col]):
-            update_new = self.SpliteByFeature(data, bestfeature)
-            tree[col][i] = self.getTree(update_new)
+        for a, dateframe in self.SpliteByFeature(data, bestfeature):
+            tree[bestfeature][a] = self.getTree(dateframe)
 
         return tree
+
+    def fit(self, train):
+        self.tree = self.getTree(train)
+
+    def predit_one(self, a):
+        self.miss = 0
+        node = self.tree
+        while isinstance(node, dict):
+            feature = next(iter(node))
+            branches = node[feature]
+            value = a[feature]
+            if value not in branches:  ##baozheng bu chuxian keyerror
+                self.miss += 1
+                node = next(iter(branches.values()))
+            else:
+                node = branches[value]
+        return node
+
+    def predit(self, dp):  # dp => dataframe
+        preds = []
+        for _, i in dp.iterrows():
+            preds.append(self.predit_one(i))
+        print(self.miss)
+        return preds
+
+    def score(self, dp):
+        labels = dp.columns[-1]
+        X = dp.drop(columns=[labels])
+        y = dp[labels].to_numpy()
+        y_pred = np.array(self.predit(X))
+        return np.mean(y_pred == y)
