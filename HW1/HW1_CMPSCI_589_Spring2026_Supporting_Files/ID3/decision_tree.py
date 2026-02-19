@@ -50,9 +50,14 @@ class DecisionTree:
         label_sort = labels.value_counts(sort=True)
         return label_sort.keys()[0]
 
+    # Extra 2
     def getTree(self, data):
         ## 停止条件：1. attibute的标签全为一类 2. 样本只剩下一个特征
         lables = data.iloc[:, -1].value_counts()  # biaoqian
+
+        x = self.get_most_label(data)
+        if lables[x] / len(data) >= 0.85:
+            return x
 
         if len(lables) == 1 or data.shape[1] == 1:
             return lables.idxmax()
