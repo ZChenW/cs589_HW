@@ -86,7 +86,7 @@ def main():
     plt.ylabel("Accuracy")
     plt.title("Train set Accuracy vs k (normalize = true)")
     plt.grid()
-    plt.ylim(0, 1)
+    plt.ylim(0.7, 1)
     plt.savefig(
         os.path.join(out_dir, "q1_1_train_normalized.png"), dpi=200, bbox_inches="tight"
     )
@@ -97,7 +97,7 @@ def main():
     plt.xlabel("Value of k")
     plt.ylabel("Accuracy")
     plt.title("Testset Accuracy vs k (normalize = true)")
-    plt.ylim(0, 1)
+    plt.ylim(0.7, 1)
     plt.grid()
     plt.savefig(
         os.path.join(out_dir, "q1_2_test_normalized.png"), dpi=200, bbox_inches="tight"
@@ -110,7 +110,7 @@ def main():
     plt.ylabel("accuracy")
     plt.title("Test Accuracy vs k (normalized = false)")
     plt.grid()
-    plt.ylim(0, 1)
+    plt.ylim(0.7, 1)
     plt.savefig(
         os.path.join(out_dir, "q1_6_test_not_normalized.png"),
         dpi=200,

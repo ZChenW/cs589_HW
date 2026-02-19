@@ -1,0 +1,51 @@
+import numpy as np
+import pandas as pd
+import operator
+
+
+class DecisionTree:
+    def __init__(self):
+        pass
+
+    ## Cal entropy
+    def InformationEntropy(self, data):
+        y_label = data.iloc[:, -1]
+        info = 0
+        enp = y_label.value_counts().values / len(y_label)
+        info -= -enp * (np.log2(enp))
+        return np.sum(info)
+
+    ## Cal Gain with attribute
+    def InformationGain(self, data, a):
+        Ent = self.InformationEntropy(data)
+        choose_class = data[a].value_counts()
+        gain = 0
+        for i in choose_class.keys():
+            w = choose_class[i] / data.shape[0]
+            Env_v = self.InformationEntropy(data.loc[data[a] == i])
+            gain += w * Env_v
+        return Ent - gain
+
+    def GetBestFeature(self, data):
+        feature = data.columns[:-1]
+        gain_list = {}
+        for i in feature:
+            gain = self.InformationGain(data, i)
+            gain_list[i] = gain
+
+        sort_gain_list = sorted(
+            gain_list.items(), key=operator.itemgetter(1), reverse=True
+        )
+        return sort_gain_list[0][0]
+
+    ## shan chu yijing shiyong guod ffeature
+    def SpliteByFeature(self, data, bestfeature):
+        attr = np.unique(data[bestfeature])
+        new_data = [(a, data[data[bestfeature] == a]) for a in attr]
+        update_new = [(i[0], i[1].drop([bestfeature], axis=1)) for i in new_data]
+        return update_new
+
+    def SpliteNond(self, data):
+        beforesplite = self.InformationGain(data)
+        best_feature_index = -1
+        beat_info_enp = 0
